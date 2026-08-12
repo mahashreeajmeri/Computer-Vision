@@ -35,10 +35,63 @@ def read_yolo_labels(label_path):
 
     return annotations
 
-def yolo_to_box(annotation, image_width, image_height):
+def yolo_to_bbox(annotation, image_width, image_height):
     '''
-    Convert YOLO coordinates to pixel bounding box coordinates
+    Convert YOLO normalized coordinates to pixel bounding box coordinates
     '''
 
-    
+    x_center= annotation["x_center"]*image_width
+    y_center= annotation["y_center"]*image_height
+
+    width= annotation["width"]*image_width
+    height= annotation["height"]*image_height
+
+    x_min = x_center - width / 2
+    y_min = y_center - height / 2
+
+    x_max = x_center + width / 2
+    y_max = y_center + height / 2
+
+    return x_min, y_min, x_max, y_max
+
+def visualize_annotations(image_path, label_path):
+    '''
+    Draw the ground-truth bounding box annotations for an image and display it.
+    '''
+
+    image= Image.open(image_path)
+    image_width, image_height= image.size
+    annotations= read_yolo_labels(label_path)
+
+    fig,ax= plt.subplots(figsize=(10,10))
+    ax.imshow(image)
+
+    for annotation in annotations:
+        x_min, y_min, x_max, y_max= yolo_to_bbox(annotation, image_width, image_height)
+
+        width = x_max - x_min
+        height = y_max - y_min
+
+        rectangle = patches.Rectangle(
+            (x_min, y_min),
+            width,
+            height,
+            linewidth=2,
+            edgecolor="blue",
+            facecolor="none"
+        )
+
+        ax.add_patch(rectangle)
+
+        ax.text(
+            x_min,
+            y_min,
+            f"Class {annotation['class_id']}",
+            color="darkblue",
+            backgroundcolor="white"
+        )
+
+    ax.axis("off")
+    plt.show()
+
 
