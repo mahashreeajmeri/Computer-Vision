@@ -83,13 +83,13 @@ def visualize_annotations(image_path, label_path):
 
         ax.add_patch(rectangle)
 
-        ax.text(
-            x_min,
-            y_min,
-            f"Class {annotation['class_id']}",
-            color="darkblue",
-            backgroundcolor="white"
-        )
+        # ax.text(
+        #     x_min,
+        #     y_min,
+        #     f"Class {annotation['class_id']}",
+        #     color="darkblue",
+        #     backgroundcolor="white"
+        # )
 
     ax.axis("off")
     plt.show()
