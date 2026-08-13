@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from PIL import Image
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -56,8 +55,8 @@ def yolo_to_bbox(annotation, image_width, image_height):
 
 def visualize_annotations(image_path, label_path=None):
     '''
-    Draw the ground-truth bounding box annotations for an image and display it.
-    If the label does not exist, then image without bounding box is displayed.
+    Draw the ground-truth bounding box annotations for an image and display it
+    If the label does not exist, then image without bounding box is displayed
     '''
 
     image= Image.open(image_path)
@@ -90,14 +89,6 @@ def visualize_annotations(image_path, label_path=None):
             )
 
             ax.add_patch(rectangle)
-
-            # ax.text(
-            #     x_min,
-            #     y_min,
-            #     f"Class {annotation['class_id']}",
-            #     color="darkblue",
-            #     backgroundcolor="white"
-            # )
 
         ax.axis("off")
         plt.show()
