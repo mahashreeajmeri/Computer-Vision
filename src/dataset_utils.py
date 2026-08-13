@@ -54,44 +54,52 @@ def yolo_to_bbox(annotation, image_width, image_height):
 
     return x_min, y_min, x_max, y_max
 
-def visualize_annotations(image_path, label_path):
+def visualize_annotations(image_path, label_path=None):
     '''
     Draw the ground-truth bounding box annotations for an image and display it.
+    If the label does not exist, then image without bounding box is displayed.
     '''
 
     image= Image.open(image_path)
     image_width, image_height= image.size
-    annotations= read_yolo_labels(label_path)
 
     fig,ax= plt.subplots(figsize=(10,10))
     ax.imshow(image)
 
-    for annotation in annotations:
-        x_min, y_min, x_max, y_max= yolo_to_bbox(annotation, image_width, image_height)
+    if label_path is None or not label_path.exists():
+        ax.set_title("No Sunspots detected!")
+        ax.axis("off")
+        plt.show()
+        return
 
-        width = x_max - x_min
-        height = y_max - y_min
+    else:
+        annotations= read_yolo_labels(label_path)
+        for annotation in annotations:
+            x_min, y_min, x_max, y_max= yolo_to_bbox(annotation, image_width, image_height)
 
-        rectangle = patches.Rectangle(
-            (x_min, y_min),
-            width,
-            height,
-            linewidth=2,
-            edgecolor="blue",
-            facecolor="none"
-        )
+            width = x_max - x_min
+            height = y_max - y_min
 
-        ax.add_patch(rectangle)
+            rectangle = patches.Rectangle(
+                (x_min, y_min),
+                width,
+                height,
+                linewidth=2,
+                edgecolor="blue",
+                facecolor="none"
+            )
 
-        # ax.text(
-        #     x_min,
-        #     y_min,
-        #     f"Class {annotation['class_id']}",
-        #     color="darkblue",
-        #     backgroundcolor="white"
-        # )
+            ax.add_patch(rectangle)
 
-    ax.axis("off")
-    plt.show()
+            # ax.text(
+            #     x_min,
+            #     y_min,
+            #     f"Class {annotation['class_id']}",
+            #     color="darkblue",
+            #     backgroundcolor="white"
+            # )
+
+        ax.axis("off")
+        plt.show()
 
 
