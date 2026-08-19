@@ -11,3 +11,16 @@ class SunspotDataset(Dataset):
         self.label_dir = Path(label_dir)
 
         self.image_files = sorted(self.image_dir.glob("*.jpg"))
+
+    def __len__(self):
+        return len(self.image_files)
+
+    def __getitem__(self, index):
+
+        #  get image
+        image_path = self.image_files[index]
+        image = Image.open(image_path).convert("RGB")
+        image_width, image_height = image.size
+
+        # find label
+         
