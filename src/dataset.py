@@ -43,7 +43,7 @@ class SunspotDataset(Dataset):
         labels= torch.tensor(np.array(image),dtype=torch.float32)
 
         # convert tensor form HxWxC to CxHxW 
-        image= image.permute(2,0,1)
+        image= torch.permute(image,(2,0,1))
 
         # normalize RGB values to 0-1
         image= image/255.0
