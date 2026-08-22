@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import Dataset
 from PIL import Image
 from .dataset_utils import read_yolo_labels, yolo_to_bbox
-
+import numpy as np 
 class SunspotDataset(Dataset):
 
     def __init__(self, image_dir, label_dir):
@@ -23,4 +23,32 @@ class SunspotDataset(Dataset):
         image_width, image_height = image.size
 
         # find label
-         
+        label_path = self.label_dir/f"{image_path.stem}.txt"
+        boxes=[]
+
+        # read annotations and convert into boxes
+        if label_path.exists():
+            annotations= read_yolo_labels(label_path)
+            for annotation in annotations:
+                box = yolo_to_bbox(annotation, image_width, image_height)
+                boxes.append(box)
+
+        # convert boxes to tensor
+        boxes= torch.tensor(boxes, dtype= torch.float32).reshape(-1,4)
+
+        # assign 1 for each sunspot and count
+        labels= torch.ones(len(boxes), dtype=torch.int64)
+
+        # convert image to tensor
+        labels= torch.tensor(np.array(image),dtype=torch.float32)
+
+        # convert tensor form HxWxC to CxHxW 
+        image= image.permute(2,0,1)
+
+        # normalize RGB values to 0-1
+        image= image/255.0
+
+        target= {"boxes":boxes,"labels":labels}
+
+        return image, target
+    
